@@ -47,4 +47,4 @@ networks:
     driver: bridge
   internal_network:
     external: true
-    name: 2f36368fc146f552b59eeacfa72040d6fa9f26ce1bbbb513b537de08a32ef60c
+    name: private_docker_network
