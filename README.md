@@ -16,11 +16,11 @@ Crear docker-compose.yml
 Levantar contenedor
 
 ### Clonando repositorio
-
+```bash
 git clone https://github.com/johnjaider1000/docker-n8n.git n8n
-
 cd n8n
 
 docker compose up -d
+```
 
 ![n8n-screenshot](https://github.com/user-attachments/assets/1c6932c2-33c9-47c2-b380-59f9be1b2b5d)
