@@ -1,23 +1,50 @@
+version: '3'
+
 services:
   n8n:
     stdin_open: true
     tty: true
     container_name: n8n
-    network_mode: host
+    image: docker.n8n.io/n8nio/n8n
     ports:
       - 5678:5678
     volumes:
       - n8n_data:/home/node/.n8n
-    image: docker.n8n.io/n8nio/n8n
     environment:
-      - N8N_HOST=0.0.0.0  # Permitir acceso desde cualquier IP
-      - N8N_PORT=5678      # Definir el puerto explícitamente
-      - N8N_SECURE_COOKIE=false  # Deshabilitar SSL (solo para pruebas)
-      - GENERIC_TIMEZONE=Europe/Madrid
-      - TZ=Europe/Madrid
-    command: ["node", "--max-old-space-size=4096", "/usr/local/bin/n8n"]
+      - N8N_HOST=n8n.domain.com
+      - N8N_PORT=5678
+      - WEBHOOK_URL=https://n8n.domain.com
+      - N8N_PROTOCOL=https
+      - N8N_SECURE_COOKIE=false
+      - GENERIC_TIMEZONE=UTC
+      - TZ=UTC
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      # Variables críticas para los webhooks
+      - N8N_LISTEN_ADDRESS=0.0.0.0
+      - NODE_BASE_URL=https://n8n.domain.com
+      - WEBHOOK_TUNNEL_URL=https://n8n.domain.com
+      - N8N_DIAGNOSTICS_ENABLED=false
+      # Variables para DNS - ayudan con resolución de nombres
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+    networks:
+      - default
+      - internal_network
+    mem_limit: 8g
+    restart: unless-stopped
+    extra_hosts:
+      # Añadir aquí cualquier host externo que necesites resolver
+      # Esto permite conexiones a bases de datos externas
+      - "host.docker.internal:host-gateway"
 
 volumes:
   n8n_data:
     external: false
     name: n8n_data
+
+networks:
+  default:
+    driver: bridge
+  internal_network:
+    external: true
+    name: 2f36368fc146f552b59eeacfa72040d6fa9f26ce1bbbb513b537de08a32ef60c
